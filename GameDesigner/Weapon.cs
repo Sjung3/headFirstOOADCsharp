@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GameDesigner
 {
-    class Weapon
+    public class Weapon
     {
     }
 }
