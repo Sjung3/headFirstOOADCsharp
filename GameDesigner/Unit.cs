@@ -6,6 +6,7 @@ namespace GameDesigner
     public class Unit
     {
         private int id;
+
         private Dictionary<string, Object> properties;
         private List<Weapon> weapons;
 
@@ -26,12 +27,21 @@ namespace GameDesigner
 
         public void SetProperty(string property, Object value)
         {
+            if (properties.ContainsKey(property))
+                properties.Remove(property);
             properties.Add(property, value);
         }
 
         public Object GetProperty(string property)
         {
-            return properties[property];
+            if (properties == null)
+                throw new SystemException("What are you doing? No properties!");
+
+            Object value = properties[property];
+            if (value == null)
+                throw new SystemException("You're screwing up! No property value!");
+            else
+                return value;
         }
 
         public void AddWeapon(Weapon weapon)
