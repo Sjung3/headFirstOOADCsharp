@@ -7,22 +7,58 @@ namespace ObjectvilleSubwayMap
 {
     public class Subway
     {
-        List<Station> stations;
-        List<Connection> connections;
+        private List<Station> stations;
+        private List<Connection> connections;
+
+        public Subway()
+        {
+            this.stations = new List<Station>();
+            this.connections = new List<Connection>();
+        }
+
+        public bool HasConnection(string station1Name, string station2Name, string lineName)
+        {
+            Station station1 = new Station(station1Name);
+            Station station2 = new Station(station2Name);
+            foreach (Connection connection in connections)
+            {
+                if (connection.LineName.Equals(lineName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if((connection.Station1.Equals(station1)) && (connection.Station2.Equals(station2)))
+                        return true;
+                }
+            }
+            return false;
+        }
 
         public void AddStation(String stationName)
         {
-            throw new NotImplementedException();
+            if(!this.HasStation(stationName))
+            {
+                Station station = new Station(stationName);
+                stations.Add(station);
+            }
         }
 
-        public bool HasStation(string name)
+        public bool HasStation(string stationName)
         {
-            throw new NotImplementedException();
+            return stations.Contains(new Station(stationName));
         }
 
-        public void AddConnection(string station1, string station2, string conectionName)
+        public void AddConnection(string station1Name, string station2Name, string connectionName)
         {
-            throw new NotImplementedException();
+            if ((this.HasStation(station1Name)) && (this.HasStation(station2Name)))
+            {
+                Station station1 = new Station(station1Name);
+                Station station2 = new Station(station2Name);
+                Connection connection = new Connection(station1, station2, connectionName);
+                connections.Add(connection);
+                connections.Add(new Connection(station2, station1, connection.LineName));
+            }
+            else
+            {
+                throw new KeyNotFoundException("Invalid connection!");
+            }
         }
     }
 }

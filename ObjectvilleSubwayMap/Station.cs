@@ -9,16 +9,27 @@ namespace ObjectvilleSubwayMap
     {
         private string name;
 
-        public string Name { get; }
-
-        public bool Equals(object obj)
+        public Station(string name)
         {
-            throw new NotImplementedException();
+            this.name = name;
         }
 
-        public int HashCode()
+        public string Name { get { return name; } }
+
+        public override bool Equals(object obj)
         {
-            throw new NotImplementedException();
+            if (obj is Station)
+            {
+                Station otherStation = (Station)obj;
+                if (otherStation.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return name.ToLower().GetHashCode();
         }
     }
 }
