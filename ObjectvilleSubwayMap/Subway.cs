@@ -9,11 +9,13 @@ namespace ObjectvilleSubwayMap
     {
         private List<Station> stations;
         private List<Connection> connections;
+        private Dictionary<Station, List<Station>> network;
 
         public Subway()
         {
             this.stations = new List<Station>();
             this.connections = new List<Connection>();
+            this.network = new Dictionary<Station, List<Station>>();
         }
 
         public bool HasConnection(string station1Name, string station2Name, string lineName)
@@ -54,11 +56,73 @@ namespace ObjectvilleSubwayMap
                 Connection connection = new Connection(station1, station2, connectionName);
                 connections.Add(connection);
                 connections.Add(new Connection(station2, station1, connection.LineName));
+
+                AddToNetwork(station1, station2);
+                AddToNetwork(station2, station1);
             }
             else
             {
                 throw new KeyNotFoundException("Invalid connection!");
             }
+        }
+
+        private void AddToNetwork(Station station1, Station station2)
+        {
+            if (network.ContainsKey(station1))
+            {
+                List<Station> connectingStations = (List<Station>)network[station1];
+                if (!connectingStations.Contains(station2))
+                    connectingStations.Add(station2);
+            }
+            else
+            {
+                List<Station> connectingStations = new List<Station>();
+                connectingStations.Add(station2);
+                network.Add(station1, connectingStations);
+            }
+        }
+
+        public List<Connection> GetDirections(string startStationName, string endStartionName)
+        {
+            if (!this.HasStation(startStationName) || (!this.HasStation(endStartionName)))
+            {
+                throw new KeyNotFoundException("Stations enterered do not exists on this subway");
+            }
+
+            Station start = new Station(startStationName);
+            Station end = new Station(endStartionName);
+
+            List<Connection> route = new List<Connection>();
+            List<Station> reachableStations = new List<Station>();
+            Dictionary<Station, Station> previousStation = new Dictionary<Station, Station>();
+
+            List<Station> neighbours = (List<Station>)network[start];
+
+            foreach (var station in neighbours)
+            {
+                if (station.Equals(end))
+                {
+                    route.Add(GetConnection(start, end));
+                    return route;
+                }
+                else
+                {
+                    reachableStations.Add(station);
+                    previousStation.Add(station, start);
+                }
+            }
+
+            List<Station> nextStations = new List<Station>();
+            nextStations.AddRange(neighbours);
+
+            Station currentStation = start;
+            /* TO DO */
+            return route;
+        }
+
+        private Connection GetConnection(Station start, Station end)
+        {
+            throw new NotImplementedException();
         }
     }
 }
