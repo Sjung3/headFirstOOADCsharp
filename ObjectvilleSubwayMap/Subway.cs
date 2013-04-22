@@ -116,13 +116,63 @@ namespace ObjectvilleSubwayMap
             nextStations.AddRange(neighbours);
 
             Station currentStation = start;
-            /* TO DO */
+            
+            //searchLoop
+            for (int i = 0; i < stations.Count; i++)
+            {
+                List<Station> tmpNextStations = new List<Station>();
+                foreach (var station in nextStations)
+                {
+                    reachableStations.Add(station);
+                    currentStation = station;
+
+                    List<Station> currentNeighbours = (List<Station>)network[currentStation];
+
+                    foreach (var neighbor in currentNeighbours)
+                    {
+                        if (neighbor.Equals(end))
+                        {
+                            reachableStations.Add(neighbor);
+                            previousStation.Add(neighbor, currentStation);
+                            goto loopEnd;
+                        }
+                        else if (!reachableStations.Contains(neighbor))
+                        {
+                            reachableStations.Add(neighbor);
+                            tmpNextStations.Add(neighbor);
+                            previousStation.Add(neighbor, currentStation);
+                        }
+                    }
+                }
+                nextStations = tmpNextStations;
+            }
+
+        loopEnd:
+
+            bool keepLooping = true;
+            Station keyStation = end;
+
+            while (keepLooping)
+            {
+                Station station = (Station)previousStation[keyStation];
+                route.Add(GetConnection(station, keyStation));
+                if (start.Equals(station))
+                    keepLooping = false;
+                keyStation = station;
+            }
             return route;
         }
 
-        private Connection GetConnection(Station start, Station end)
+        private Connection GetConnection(Station station1, Station station2)
         {
-            throw new NotImplementedException();
+            foreach (var connection in connections)
+            {
+                Station one = connection.Station1;
+                Station two = connection.Station2;
+                if((station1.Equals(one) && (station2.Equals(two))))
+                    return connection;           
+            }
+            return null;
         }
     }
 }
